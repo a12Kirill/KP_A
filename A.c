@@ -35,13 +35,12 @@ t_CalcVal S_counter(t_CalcVal countstruct, t_Material mats[]);
 t_CalcVal S_Proemov(t_CalcVal countstruct, t_Material mats[]);
 t_CalcVal calculatorWalls(t_CalcVal countstruct, t_Material mats[]);
 t_CalcVal finalResult(int finres, t_CalcVal countstruct, t_Material mats[]);
-void writeInFile(t_CalcVal countstruct);
-t_CalcVal menu(t_CalcVal calcValuesC, t_Material mats[]);
+int writeInFile(t_CalcVal countstruct);
 int printMats(t_Material mats[], int size);
 int readfromFile(t_Material mats[]);
 t_CalcVal calcEnd(t_CalcVal countstruct, t_Material mats[]);
 
-void main()//Главная функция, в которой находится выбор материала
+int main()//Главная функция, в которой находится выбор материала
 {
 	setlocale(LC_ALL, "RUS");
 	puts("Калькулятор для расчета количества гипсокартона\nдля обшивки стен и потолков в комнатах с учетом размеров комнаты,\nокон и дверных проемов");
@@ -54,10 +53,60 @@ void main()//Главная функция, в которой находится выбор материала
 	calcValuesC.ProemSummPlosh = 0;
 	calcValuesC.choosenMaterial = 0;
 	t_Material mats[N];
-	calcValuesC = menu(calcValuesC, mats);
+	int menuPnumb = 0;
+	//calcValuesC = menu(calcValuesC, mats);
+	while (whileActive!=1)
+	{
+		int yesNo;
+		puts("\n-----------МЕНЮ-----------\n1. Выбор материала\n2. Ввод данных потолка\n3. Ввод данных стен\n4. Ввод данных проемов\n5. Расчет конечного результата\n6. Завершить программу\n");
+		scanf("%d", &menuPnumb);
+		//getchar();
+		switch (menuPnumb)
+		{
+		case 1:
+			calcValuesC = materialChose(calcValuesC, mats);
+			//return calcValuesC;
+			break;
+		case 2:
+			calcValuesC = S_counter(calcValuesC, mats);
+			//return calcValuesC;
+			break;
+		case 3:
+			calcValuesC = calculatorWalls(calcValuesC, mats);
+			//return calcValuesC;
+			break;
+		case 4:
+			calcValuesC = S_Proemov(calcValuesC, mats);
+			//return calcValuesC;
+			break;
+		case 5:
+			calcValuesC = calcEnd(calcValuesC, mats);
+			//return calcValuesC;
+			break;
+		case 6:
+			puts("\nВы действительно хотите завершить работу программы?\n1) Да\n2) Нет");
+			scanf("%d", &yesNo);
+			switch (yesNo)
+			{
+			case 1:
+				puts("Работа программы завершена.");
+				return;
+				break;
+			case 2:
+				puts("Продолжение работы программы");
+				//break;
+			default:
+				break;
+			}
+			break;
+		default:
+			puts("Вы выбрали несуществующий пункт. Выберите пункт от 1 до 6");
 
-	//printMats(mats, size);
-	//printMats(mats, sizeofmass);
+			break;
+		}
+	}
+	return 0;
+
 	
 }
 int readfromFile(t_Material mats[])
@@ -88,59 +137,6 @@ int printMats(t_Material mats[], int size)
 	}
 }
 
-t_CalcVal menu(t_CalcVal calcValuesC, t_Material mats[])
-{
-
-	int menuPnumb;
-	int yesNo;
-	puts("\n-----------МЕНЮ-----------\n1. Выбор материала\n2. Ввод данных потолка\n3. Ввод данных стен\n4. Ввод данных проемов\n5. Расчет конечного результата\n6. Завершить программу\n");
-	scanf("%d", &menuPnumb);
-	switch (menuPnumb)
-	{
-	case 1:
-		calcValuesC = materialChose(calcValuesC, mats);
-		return calcValuesC;
-		break;
-	case 2:
-		calcValuesC = S_counter(calcValuesC, mats);
-		return calcValuesC;
-		break;
-	case 3:
-		calcValuesC = calculatorWalls(calcValuesC, mats);
-		return calcValuesC;
-		break;
-	case 4:
-		calcValuesC = S_Proemov(calcValuesC, mats);
-		return calcValuesC;
-		break;
-	case 5:
-		calcValuesC = calcEnd(calcValuesC, mats);
-		return calcValuesC;
-		break;
-	case 6:
-		puts("\nВы действительно хотите завершить работу программы?\n1) Да\n2) Нет");
-		scanf("%d", &yesNo);
-		switch (yesNo)
-		{
-		case 1:
-			puts("Работа программы завершена.");
-			return;
-			break;
-		case 2:
-			puts("Продолжение работы программы");
-			menu(calcValuesC, mats);
-			break;
-		default:
-			break;
-		}
-		break;
-	default:
-		puts("Вы выбрали несуществующий пункт. Выберите пункт от 1 до 6");
-		menu(calcValuesC, mats);
-		break;
-	}
-}
-
 t_CalcVal materialChose(t_CalcVal countstruct, t_Material mats[])
 {
 	
@@ -153,14 +149,14 @@ t_CalcVal materialChose(t_CalcVal countstruct, t_Material mats[])
 	{
 		printf("\nВы выбрали материал под номером %d)\nНаименование: %s,\nВысота: %.2f,\nШирина: %.2f\n", countstruct.choosenMaterial, mats[countstruct.choosenMaterial].name, mats[countstruct.choosenMaterial].vis, mats[countstruct.choosenMaterial].dlina);
 		
-		menu(countstruct, mats);
+		//menu(countstruct, mats);
 		return countstruct;
 	}
 	else
 	{
 		puts("Материала под данным номером не существует.");
 		countstruct.choosenMaterial = 0;
-		menu(countstruct, mats);
+		//menu(countstruct, mats);
 		return countstruct;
 	}
 
@@ -197,7 +193,7 @@ t_CalcVal S_counter(t_CalcVal countstruct, t_Material mats[])// В данной функции
 		countstruct.plosPot = 0;
 
 	}
-	menu(countstruct, mats);
+	//menu(countstruct, mats);
 	return countstruct;
 
 }
@@ -205,7 +201,7 @@ t_CalcVal calculatorWalls(t_CalcVal countstruct, t_Material mats[])//Данная функ
 {
 	
 	int counter = 1;
-	
+	countstruct.summPloshadiSten = 0;
 	puts("\nДавайте рассчитаем площадь стен (без учетов проемов)");
 	//----------------------------Рассчет площади стен-------------------------------------
 	for (int i = 0;; i++)
@@ -236,11 +232,11 @@ t_CalcVal calculatorWalls(t_CalcVal countstruct, t_Material mats[])//Данная функ
 	else
 	{
 		puts("Вы не ввели ни одну длину стены.");
-		menu(countstruct, mats);
+		//menu(countstruct, mats);
 		//Иначе если равна нулю, то результат будет ноль
 		return;//Раз никаких значений введено не было, программа завершается
 	}
-	menu(countstruct, mats);
+	//menu(countstruct, mats);
 	return countstruct;
 
 }
@@ -279,7 +275,7 @@ t_CalcVal S_Proemov(t_CalcVal countstruct, t_Material mats[])
 	{
 		puts("Вы отказались от ввода проемов");//Иначе выводим данное сообщение
 	}
-	menu(countstruct, mats);
+	//menu(countstruct, mats);
 	return countstruct;
 }
 
@@ -329,19 +325,22 @@ t_CalcVal finalResult(int finalRes, t_CalcVal countstruct, t_Material mats[])
 	else if(countstruct.choosenMaterial == 0)
 	{
 		puts("Вы не выбрали вид гипсокартона");
-		menu(countstruct, mats);
+		return;
+	//	menu(countstruct, mats);
 	}
 	else
 	{
 		puts("Вы ввели недостаточно данных, необходимых для расчета.");
-		menu(countstruct, mats);
+		return;
+
+		//menu(countstruct, mats);
 	}
-	menu(countstruct, mats);
+	//menu(countstruct, mats);
 	return countstruct;
 	
 }
 
-void writeInFile(t_CalcVal countstruct, char str[])//Void в Int
+int writeInFile(t_CalcVal countstruct, char str[])//Void в Int
 {
 	FILE* out;
 	char fname[20] = "dataVal.txt";
@@ -352,5 +351,5 @@ void writeInFile(t_CalcVal countstruct, char str[])//Void в Int
 	}
 	fprintf(out,str);
 	fclose(out);
-
+	return 0;
 }
